@@ -1,6 +1,6 @@
 # agent-memory for Pi
 
-A Pi package for the [Lossless Tree Memory engine](../../README.md). It shares one project's
+A Pi package for the [Yewtree memory engine](../../README.md). It shares one project's
 memory with the [Claude Code](../claude-code/README.md) and [OpenCode](../opencode/README.md) plugins, and maps
 Pi's session tree onto memory branches.
 
@@ -21,11 +21,11 @@ branch, in `<project>/.agent-memory/` (encrypted, ignored by git).
 ## Install
 
 ```bash
-uv tool install git+https://github.com/AdamMostofi/lossless-tree-memory@v0.1.0   # the amem command; once per machine
-pi install git:github.com/AdamMostofi/lossless-tree-memory@v0.1.0   # turns on capture, context and the tools
+uv tool install git+https://github.com/AdamMostofi/yewtree@v0.2.0   # the amem command; once per machine
+pi install git:github.com/AdamMostofi/yewtree@v0.2.0   # turns on capture, context and the tools
 ```
 
-To try it for one run without installing: `pi -e /path/to/lossless-tree-memory/plugins/pi`.
+To try it for one run without installing: `pi -e /path/to/yewtree/plugins/pi`.
 
 **Environment variables:**
 - `AMEM_BIN`: where `amem` is. Default: `amem` on the PATH, then `~/.local/bin/amem`.

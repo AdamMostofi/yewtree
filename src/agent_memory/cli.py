@@ -52,7 +52,7 @@ TOOL_COMMANDS = {"state": "mem_state", "knowledge": "mem_knowledge", "artifacts"
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="amem", description="Lossless Tree Memory Engine")
+    parser = argparse.ArgumentParser(prog="amem", description="Yewtree Engine")
     parser.add_argument("--project", default=".", help="project root (default: current directory)")
     parser.add_argument("--home", help="put the store under this directory instead of <project>/.agent-memory "
                                        "(AMEM_HOME does the same)")

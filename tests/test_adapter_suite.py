@@ -357,7 +357,7 @@ def test_the_codex_and_gemini_packages_hook_every_event_the_adapter_handles():
     manifest = json.loads((ROOT / "plugins" / "codex" / ".codex-plugin" / "plugin.json").read_text())
     assert manifest["hooks"] == "./hooks/hooks.json"
     extension = json.loads((ROOT / "plugins" / "gemini" / "gemini-extension.json").read_text())
-    assert extension["name"] == "lossless-tree-memory" and "agent-memory" in extension["mcpServers"]
+    assert extension["name"] == "yewtree" and "agent-memory" in extension["mcpServers"]
 
 
 def test_every_plugin_ships_the_same_launcher():

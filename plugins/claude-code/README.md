@@ -1,6 +1,6 @@
 # agent-memory for Claude Code
 
-A Claude Code plugin for the [Lossless Tree Memory engine](../../README.md).
+A Claude Code plugin for the [Yewtree memory engine](../../README.md).
 
 **What it records:** every session, prompt, tool call, file change, test run, assistant message and compaction, losslessly, in `<project>/.agent-memory/`. That folder is encrypted and ignored by git.
 
@@ -13,12 +13,12 @@ A Claude Code plugin for the [Lossless Tree Memory engine](../../README.md).
 ## Install
 
 ```bash
-uv tool install git+https://github.com/AdamMostofi/lossless-tree-memory@v0.1.0   # the amem command; once per machine
-claude plugin marketplace add AdamMostofi/lossless-tree-memory   # once
-claude plugin install lossless-tree-memory@lossless-tree-memory
+uv tool install git+https://github.com/AdamMostofi/yewtree@v0.2.0   # the amem command; once per machine
+claude plugin marketplace add AdamMostofi/yewtree   # once
+claude plugin install yewtree@yewtree
 ```
 
-To try it without installing: `claude --plugin-dir /path/to/lossless-tree-memory/plugins/claude-code`.
+To try it without installing: `claude --plugin-dir /path/to/yewtree/plugins/claude-code`.
 
 **When the plugin is enabled,** Claude Code asks:
 - **Key storage:** `key-file` (the default), `passphrase`, or `keychain`, which needs the `keyring` package. This is decision D4: the choice is made at onboarding.
@@ -32,7 +32,7 @@ To try it without installing: `claude --plugin-dir /path/to/lossless-tree-memory
 ## Remove
 
 ```bash
-claude plugin uninstall lossless-tree-memory@lossless-tree-memory
+claude plugin uninstall yewtree@yewtree
 ```
 
 Nothing in the project changes: the store is in `.agent-memory/`, which git ignores. Delete that folder to delete the memory too.

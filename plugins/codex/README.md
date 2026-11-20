@@ -3,7 +3,7 @@
 **Status: built from the Codex documentation (read 2026-11-20); not tested against a real Codex install.** See
 [docs/agents.md](../../docs/agents.md).
 
-A Codex plugin for the [Lossless Tree Memory engine](../../README.md): lossless capture through
+A Codex plugin for the [Yewtree memory engine](../../README.md): lossless capture through
 Codex's lifecycle hooks, memory context at session start and on each prompt, and the memory tools over MCP.
 It shares one project's memory with the other agents' plugins.
 
@@ -20,8 +20,8 @@ It shares one project's memory with the other agents' plugins.
 ## Install
 
 ```bash
-uv tool install git+https://github.com/AdamMostofi/lossless-tree-memory@v0.1.0   # the amem command
-codex plugin marketplace add AdamMostofi/lossless-tree-memory
+uv tool install git+https://github.com/AdamMostofi/yewtree@v0.2.0   # the amem command
+codex plugin marketplace add AdamMostofi/yewtree
 ```
 
 Then:

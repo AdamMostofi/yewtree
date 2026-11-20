@@ -1,6 +1,6 @@
 {
-  "name": "lossless-tree-memory",
-  "version": "0.1.0",
+  "name": "yewtree",
+  "version": "0.2.0",
   "description": "Lossless project memory: captures sessions, prompts, tools, file changes and test runs, and gives the agent memory context at session start and on each prompt, plus the agent-memory tools. Needs the amem engine.",
   "license": "MIT",
   "keywords": [

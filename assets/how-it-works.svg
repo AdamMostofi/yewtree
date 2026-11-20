@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" width="960" height="420" role="img" aria-labelledby="t d">
+  <title id="t">How Yewtree works</title>
+  <desc id="d">The agent's hooks or plugin hand every event to the amem engine, which redacts secrets, records the event and reconciles files into the project's store. Memory goes back into the agent's context as an overview at session start, offers on each prompt, a restore after compaction, and tools on demand.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, sans-serif; }
+    .box { fill: oklch(0.965 0.02 150); stroke: oklch(0.70 0.08 150); stroke-width: 1.5; }
+    .eng { fill: oklch(0.36 0.07 152); }
+    .lane { fill: oklch(0.94 0.04 146); stroke: oklch(0.62 0.12 146); stroke-width: 1.5; stroke-dasharray: 6 6; }
+    .chip { fill: oklch(0.985 0.01 150); stroke: oklch(0.72 0.10 146); stroke-width: 1.2; }
+    .h { fill: oklch(0.28 0.07 152); font-size: 19px; font-weight: 600; }
+    .b { fill: oklch(0.38 0.04 152); font-size: 14px; }
+    .eh { fill: oklch(0.97 0.02 150); font-size: 19px; font-weight: 600; }
+    .eb { fill: oklch(0.88 0.04 150); font-size: 14px; }
+    .ct { fill: oklch(0.32 0.07 150); font-size: 14px; font-weight: 500; }
+    .arr { stroke: oklch(0.45 0.08 152); stroke-width: 2; fill: none; }
+    .ret { stroke: oklch(0.55 0.13 146); stroke-width: 2; fill: none; }
+    @media (prefers-color-scheme: dark) {
+      .box { fill: oklch(0.25 0.03 152); stroke: oklch(0.50 0.07 150); }
+      .eng { fill: oklch(0.80 0.10 150); }
+      .lane { fill: oklch(0.24 0.04 146); stroke: oklch(0.70 0.12 146); }
+      .chip { fill: oklch(0.30 0.04 150); stroke: oklch(0.62 0.10 146); }
+      .h { fill: oklch(0.95 0.03 150); } .b { fill: oklch(0.84 0.03 150); }
+      .eh { fill: oklch(0.22 0.05 152); } .eb { fill: oklch(0.30 0.06 152); }
+      .ct { fill: oklch(0.90 0.06 148); }
+      .arr { stroke: oklch(0.82 0.06 150); } .ret { stroke: oklch(0.78 0.13 146); }
+    }
+  </style>
+  <rect class="box" x="40" y="40" width="200" height="140" rx="14"/>
+  <text class="h" x="62" y="78">Your agent</text>
+  <text class="b" x="62" y="108">Claude Code, OpenCode,</text>
+  <text class="b" x="62" y="130">Pi, Codex, Gemini CLI,</text>
+  <text class="b" x="62" y="152">Cursor, and more</text>
+
+  <rect class="box" x="290" y="58" width="160" height="104" rx="14"/>
+  <text class="h" x="370" y="96" text-anchor="middle">Hooks or</text>
+  <text class="h" x="370" y="120" text-anchor="middle">plugin</text>
+  <text class="b" x="370" y="146" text-anchor="middle">never blocks the agent</text>
+
+  <rect class="eng" x="500" y="40" width="210" height="140" rx="14"/>
+  <text class="eh" x="524" y="78">amem engine</text>
+  <text class="eb" x="524" y="108">redacts secrets</text>
+  <text class="eb" x="524" y="130">records every event</text>
+  <text class="eb" x="524" y="152">reconciles every file</text>
+
+  <rect class="box" x="760" y="40" width="160" height="140" rx="14"/>
+  <text class="h" x="784" y="78">Project</text>
+  <text class="h" x="784" y="102">memory</text>
+  <text class="b" x="784" y="132">encrypted, in</text>
+  <text class="b" x="784" y="154">.agent-memory/</text>
+
+  <line class="arr" x1="240" y1="110" x2="282" y2="110" marker-end="url(#a)"/>
+  <line class="arr" x1="450" y1="110" x2="492" y2="110" marker-end="url(#a)"/>
+  <line class="arr" x1="710" y1="110" x2="752" y2="110" marker-end="url(#a)"/>
+
+  <rect class="lane" x="40" y="250" width="880" height="130" rx="16"/>
+  <text class="h" x="64" y="288">Back into the context window</text>
+  <rect class="chip" x="64" y="308" width="196" height="44" rx="22"/>
+  <text class="ct" x="162" y="335" text-anchor="middle">Overview at session start</text>
+  <rect class="chip" x="276" y="308" width="196" height="44" rx="22"/>
+  <text class="ct" x="374" y="335" text-anchor="middle">Offers on each prompt</text>
+  <rect class="chip" x="488" y="308" width="210" height="44" rx="22"/>
+  <text class="ct" x="593" y="335" text-anchor="middle">Restore after compaction</text>
+  <rect class="chip" x="714" y="308" width="190" height="44" rx="22"/>
+  <text class="ct" x="809" y="335" text-anchor="middle">Tools on demand (MCP)</text>
+
+  <path class="ret" d="M605 180 V242" marker-end="url(#a)"/>
+  <path class="ret" d="M140 250 V188" marker-end="url(#a)"/>
+</svg>

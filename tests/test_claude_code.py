@@ -244,7 +244,7 @@ DOCUMENTED_EVENTS = {"SessionStart", "Setup", "UserPromptSubmit", "UserPromptExp
 
 def test_the_plugin_manifests_follow_the_documented_formats():
     manifest = json.loads((PLUGIN / ".claude-plugin" / "plugin.json").read_text())
-    assert manifest["name"] == "lossless-tree-memory" and "claude" not in manifest["name"]
+    assert manifest["name"] == "yewtree" and "claude" not in manifest["name"]
     for option in manifest["userConfig"].values():
         assert set(option) <= {"type", "title", "description", "required", "default", "options", "multiple",
                                "sensitive", "min", "max"} and {"type", "title", "description"} <= set(option)

@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="960" height="440" role="img" aria-labelledby="t d">
+  <title id="t">Four trees over one store</title>
+  <desc id="d">History, Artifacts, Knowledge and State are four separately navigable trees. Each answers one question, and all four sit on one append-only, encrypted store, with explicit links between them.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, sans-serif; }
+    .card { stroke-width: 1.5; }
+    .c1 { fill: oklch(0.95 0.035 152); stroke: oklch(0.52 0.12 152); }
+    .c2 { fill: oklch(0.95 0.04 146); stroke: oklch(0.60 0.14 146); }
+    .c3 { fill: oklch(0.96 0.045 140); stroke: oklch(0.62 0.14 140); }
+    .c4 { fill: oklch(0.95 0.03 160); stroke: oklch(0.48 0.10 160); }
+    .store { fill: oklch(0.36 0.07 152); }
+    .h { fill: oklch(0.28 0.07 152); font-size: 22px; font-weight: 600; }
+    .q { fill: oklch(0.42 0.10 150); font-size: 16px; font-style: italic; }
+    .b { fill: oklch(0.34 0.04 152); font-size: 15px; }
+    .sh { fill: oklch(0.97 0.02 150); font-size: 20px; font-weight: 600; }
+    .sb { fill: oklch(0.88 0.04 150); font-size: 15px; }
+    .link { stroke: oklch(0.55 0.10 150); stroke-dasharray: 5 6; fill: none; stroke-width: 1.5; }
+    .lt { fill: oklch(0.45 0.08 150); font-size: 14px; }
+    .stem { stroke: oklch(0.55 0.10 150); stroke-width: 2; }
+    @media (prefers-color-scheme: dark) {
+      .c1 { fill: oklch(0.27 0.04 152); stroke: oklch(0.74 0.13 152); }
+      .c2 { fill: oklch(0.27 0.045 146); stroke: oklch(0.80 0.14 146); }
+      .c3 { fill: oklch(0.28 0.05 140); stroke: oklch(0.86 0.13 140); }
+      .c4 { fill: oklch(0.26 0.035 160); stroke: oklch(0.70 0.11 160); }
+      .store { fill: oklch(0.80 0.10 150); }
+      .h { fill: oklch(0.95 0.03 150); } .q { fill: oklch(0.84 0.10 148); } .b { fill: oklch(0.86 0.03 150); }
+      .sh { fill: oklch(0.22 0.05 152); } .sb { fill: oklch(0.30 0.06 152); }
+      .link, .stem { stroke: oklch(0.72 0.10 150); } .lt { fill: oklch(0.80 0.06 150); }
+    }
+  </style>
+  <rect class="card c1" x="40" y="40" width="200" height="180" rx="16"/>
+  <text class="h" x="64" y="84">History</text>
+  <text class="q" x="64" y="112">What happened?</text>
+  <text class="b" x="64" y="150">Sessions and turns,</text>
+  <text class="b" x="64" y="172">prompts, tool calls,</text>
+  <text class="b" x="64" y="194">replies, compactions</text>
+
+  <rect class="card c2" x="266" y="40" width="200" height="180" rx="16"/>
+  <text class="h" x="290" y="84">Artifacts</text>
+  <text class="q" x="290" y="112">What exists?</text>
+  <text class="b" x="290" y="150">Every file version,</text>
+  <text class="b" x="290" y="172">code symbols, imports,</text>
+  <text class="b" x="290" y="194">document sections</text>
+
+  <rect class="card c3" x="492" y="40" width="200" height="180" rx="16"/>
+  <text class="h" x="516" y="84">Knowledge</text>
+  <text class="q" x="516" y="112">What do we know?</text>
+  <text class="b" x="516" y="150">Decisions and reasons,</text>
+  <text class="b" x="516" y="172">bugs and their fixes,</text>
+  <text class="b" x="516" y="194">topics, constraints</text>
+
+  <rect class="card c4" x="718" y="40" width="200" height="180" rx="16"/>
+  <text class="h" x="742" y="84">State</text>
+  <text class="q" x="742" y="112">What matters now?</text>
+  <text class="b" x="742" y="150">Objectives, tasks,</text>
+  <text class="b" x="742" y="172">blockers, focus,</text>
+  <text class="b" x="742" y="194">test status, next steps</text>
+
+  <path class="link" d="M240 130 H266"/>
+  <path class="link" d="M466 130 H492"/>
+  <path class="link" d="M692 130 H718"/>
+  <text class="lt" x="480" y="258" text-anchor="middle">Explicit links between trees: a fix concerns a file, a decision was discussed in a session</text>
+
+  <line class="stem" x1="140" y1="220" x2="140" y2="300"/>
+  <line class="stem" x1="366" y1="220" x2="366" y2="240"/>
+  <line class="stem" x1="366" y1="270" x2="366" y2="300"/>
+  <line class="stem" x1="592" y1="220" x2="592" y2="240"/>
+  <line class="stem" x1="592" y1="270" x2="592" y2="300"/>
+  <line class="stem" x1="818" y1="220" x2="818" y2="300"/>
+
+  <rect class="store" x="40" y="300" width="878" height="100" rx="16"/>
+  <text class="sh" x="479" y="340" text-anchor="middle">One store, inside the project</text>
+  <text class="sb" x="479" y="370" text-anchor="middle">An append-only, hash-chained event log and an encrypted, content-addressed archive. Nothing is deleted.</text>
+</svg>

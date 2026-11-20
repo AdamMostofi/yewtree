@@ -1,14 +1,14 @@
 {
-  "name": "lossless-tree-memory",
-  "displayName": "Agent Memory (Lossless Tree Memory)",
-  "version": "0.1.0",
+  "name": "yewtree",
+  "displayName": "Yewtree",
+  "version": "0.2.0",
   "description": "Lossless, tree-structured project memory: every session, edit and decision is kept, and only what the work needs is loaded into context, offloaded when done, and restored after compaction.",
   "author": {
     "name": "AdamMostofi",
     "url": "https://github.com/AdamMostofi"
   },
-  "homepage": "https://github.com/AdamMostofi/lossless-tree-memory",
-  "repository": "https://github.com/AdamMostofi/lossless-tree-memory",
+  "homepage": "https://github.com/AdamMostofi/yewtree",
+  "repository": "https://github.com/AdamMostofi/yewtree",
   "license": "MIT",
   "keywords": [
     "memory",

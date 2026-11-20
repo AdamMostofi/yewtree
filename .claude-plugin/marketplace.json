@@ -1,10 +1,10 @@
 {
-  "name": "lossless-tree-memory",
-  "description": "Lossless Tree Memory: lossless, tree-structured project memory for coding agents.",
+  "name": "yewtree",
+  "description": "Yewtree: lossless, tree-structured project memory for coding agents.",
   "owner": { "name": "AdamMostofi", "url": "https://github.com/AdamMostofi" },
   "plugins": [
     {
-      "name": "lossless-tree-memory",
+      "name": "yewtree",
       "source": "./plugins/claude-code",
       "description": "Lossless, tree-structured project memory with a context manager: everything is kept, only what the work needs is loaded.",
       "category": "productivity",

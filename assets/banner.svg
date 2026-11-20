@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 360" width="1280" height="360" role="img" aria-labelledby="t d">
+  <title id="t">Yewtree: lossless, tree-structured memory for coding agents</title>
+  <desc id="d">The Yewtree logo, a trunk splitting into four branches, beside the name and the tagline, and the agents it works with.</desc>
+  <style>
+    .panel { fill: oklch(0.965 0.018 150); stroke: oklch(0.88 0.04 150); }
+    .wood { stroke: oklch(0.40 0.08 152); }
+    .root { stroke: oklch(0.40 0.08 152); opacity: .55; }
+    .n1 { fill: oklch(0.52 0.12 152); } .n2 { fill: oklch(0.60 0.14 146); }
+    .n3 { fill: oklch(0.66 0.14 140); } .n4 { fill: oklch(0.48 0.10 160); }
+    .name { fill: oklch(0.30 0.07 152); font: 600 96px ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, sans-serif; letter-spacing: -2px; }
+    .tag { fill: oklch(0.38 0.05 152); font: 400 30px ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, sans-serif; }
+    .chip { fill: oklch(0.92 0.04 150); stroke: oklch(0.80 0.07 150); }
+    .chipt { fill: oklch(0.34 0.07 152); font: 500 18px ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, sans-serif; }
+    @media (prefers-color-scheme: dark) {
+      .panel { fill: oklch(0.22 0.025 152); stroke: oklch(0.34 0.04 152); }
+      .wood, .root { stroke: oklch(0.86 0.06 150); }
+      .n1 { fill: oklch(0.74 0.13 152); } .n2 { fill: oklch(0.80 0.14 146); }
+      .n3 { fill: oklch(0.86 0.13 140); } .n4 { fill: oklch(0.70 0.11 160); }
+      .name { fill: oklch(0.95 0.03 150); }
+      .tag { fill: oklch(0.82 0.04 150); }
+      .chip { fill: oklch(0.28 0.04 152); stroke: oklch(0.42 0.06 152); }
+      .chipt { fill: oklch(0.88 0.05 150); }
+    }
+  </style>
+  <rect class="panel" x="2" y="2" width="1276" height="356" rx="28" stroke-width="2"/>
+  <g transform="translate(88 72) scale(1.7)">
+    <g fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+      <path class="wood" d="M64 108 V70"/>
+      <path class="wood" d="M64 74 C64 60 46 56 30 42"/>
+      <path class="wood" d="M64 70 C64 54 54 40 52 22"/>
+      <path class="wood" d="M64 70 C64 54 74 40 76 22"/>
+      <path class="wood" d="M64 74 C64 60 82 56 98 42"/>
+      <path class="root" stroke-width="4" d="M64 108 C58 113 48 116 38 116"/>
+      <path class="root" stroke-width="4" d="M64 108 C70 113 80 116 90 116"/>
+      <path class="root" stroke-width="4" d="M64 108 V120"/>
+    </g>
+    <circle class="n1" cx="30" cy="42" r="10"/>
+    <circle class="n2" cx="52" cy="22" r="10"/>
+    <circle class="n3" cx="76" cy="22" r="10"/>
+    <circle class="n4" cx="98" cy="42" r="10"/>
+  </g>
+  <text class="name" x="420" y="168">Yewtree</text>
+  <text class="tag" x="424" y="218">Lossless, tree-structured memory for coding agents.</text>
+  <g>
+    <rect class="chip" x="424" y="252" width="146" height="40" rx="20" stroke-width="1.5"/>
+    <text class="chipt" x="497" y="278" text-anchor="middle">Claude Code</text>
+    <rect class="chip" x="582" y="252" width="122" height="40" rx="20" stroke-width="1.5"/>
+    <text class="chipt" x="643" y="278" text-anchor="middle">OpenCode</text>
+    <rect class="chip" x="716" y="252" width="62" height="40" rx="20" stroke-width="1.5"/>
+    <text class="chipt" x="747" y="278" text-anchor="middle">Pi</text>
+    <rect class="chip" x="790" y="252" width="94" height="40" rx="20" stroke-width="1.5"/>
+    <text class="chipt" x="837" y="278" text-anchor="middle">Codex</text>
+    <rect class="chip" x="896" y="252" width="136" height="40" rx="20" stroke-width="1.5"/>
+    <text class="chipt" x="964" y="278" text-anchor="middle">Gemini CLI</text>
+    <rect class="chip" x="1044" y="252" width="104" height="40" rx="20" stroke-width="1.5"/>
+    <text class="chipt" x="1096" y="278" text-anchor="middle">Cursor</text>
+  </g>
+</svg>

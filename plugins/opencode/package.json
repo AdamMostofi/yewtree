@@ -1,6 +1,6 @@
 {
-  "name": "opencode-lossless-tree-memory",
-  "version": "0.1.0",
+  "name": "opencode-yewtree",
+  "version": "0.2.0",
   "description": "Lossless project memory for OpenCode: capture, memory context at session start and per prompt, and the agent-memory tools. Needs the amem engine.",
   "type": "module",
   "main": "index.js",
@@ -17,6 +17,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AdamMostofi/lossless-tree-memory.git"
+    "url": "git+https://github.com/AdamMostofi/yewtree.git"
   }
 }

@@ -1,8 +1,8 @@
 {
-  "name": "lossless-tree-memory",
+  "name": "yewtree",
   "plugins": [
     {
-      "name": "lossless-tree-memory",
+      "name": "yewtree",
       "source": { "source": "local", "path": "./plugins/codex" },
       "policy": { "installation": "manual", "authentication": "none" },
       "category": "productivity"

@@ -1,167 +1,192 @@
-# Lossless Tree Memory
+<p align="center">
+  <img src="assets/banner.svg" alt="Yewtree: lossless, tree-structured memory for coding agents" width="100%">
+</p>
 
-**Status:** v0.1.0, the first release. It was built inside the [ADAM](https://github.com/AdamMostofi/ADAM)
-repository under the working name `agent-memory`, and extracted here with its history. The command is `amem`,
-and the Python package is `agent_memory`.
+<p align="center">
+  <a href="https://github.com/AdamMostofi/yewtree/releases"><img alt="Release" src="https://img.shields.io/github/v/release/AdamMostofi/yewtree?color=2f6b45&label=release"></a>
+  <a href="https://github.com/AdamMostofi/yewtree/actions/workflows/tests.yml"><img alt="Tests" src="https://github.com/AdamMostofi/yewtree/actions/workflows/tests.yml/badge.svg"></a>
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-2f6b45"></a>
+  <img alt="Python 3.10+" src="https://img.shields.io/badge/python-3.10%2B-2f6b45">
+  <img alt="No network calls" src="https://img.shields.io/badge/network-none-2f6b45">
+  <img alt="Encrypted at rest" src="https://img.shields.io/badge/archive-encrypted-2f6b45">
+</p>
 
-A general-purpose, lossless memory for long-running AI agents, with software development as its primary use.
+<p align="center">
+  <b>Your coding agent forgets. Yewtree keeps everything, and shows the agent only what it needs.</b>
+</p>
 
-**The principle:** the entire history is kept permanently, but an agent loads only what it needs, from the
-right tree, at the right time.
+---
+
+## Why
+
+Long agent sessions lose things:
+- **Compaction** summarises the past and throws away the detail.
+- **A new session** starts from nothing.
+- **A notes file** goes stale the moment a file changes behind it.
+
+Yewtree records every prompt, tool call, reply, file version, test run and decision, losslessly, in the project
+itself. It keeps that record honest: it checks files against what the agent says it did, and records the gaps.
+Then it hands the agent a small, budgeted slice at the moments that matter:
+- when a session starts;
+- on each prompt;
+- right after a compaction.
+
+The rest stays one tool call away.
+
+## How it works
+
+<p align="center"><img src="assets/how-it-works.svg" alt="The agent's hooks hand every event to the amem engine, which records it in the project's memory; memory flows back as an overview, prompt offers, a restore after compaction, and tools." width="100%"></p>
+
+- **Capture never gets in the way.** Every hook exits 0. A broken store becomes a recorded gap, never an error
+  in the agent. A session server keeps the store open, so a hook takes tens of milliseconds.
+- **Nothing is trusted blindly.** Every file change is checked against what the agent reported, and labelled:
+  - `agent_tool`: an agent's edit;
+  - `agent_bash`: an agent's command;
+  - `git_operation`;
+  - `external`;
+  - an honest `unattributed`.
+
+  Test results are marked verified, stale or unknown, and say why.
+- **Context is a budget, not a dump.** A context manager tracks what the agent has loaded. It offloads finished
+  work to one-line references, and restores any reference exactly.
+
+## Four trees, one store
+
+<p align="center"><img src="assets/four-trees.svg" alt="History, Artifacts, Knowledge and State are four navigable trees over one append-only, encrypted store." width="100%"></p>
+
+Each tree answers one question and has its own navigator, and links between trees are explicit. Every record
+says how it is known:
+- **observed** by the engine;
+- **declared** by an agent or by you;
+- **inferred** by a named rule.
+
+## Features
+
+**Capture and storage**
+- **Event log:** append-only, with a hash chain per writer, so tampering or loss shows up in `amem verify`.
+- **Archive:** compressed, encrypted (AES-256-GCM) and content-addressed. Old content is packed losslessly with
+  lzma.
+- **Secrets:** redacted before anything is written. `amem purge` removes a leaked value for good, and can
+  rotate the key.
+- **Where it lives:** inside the project, in `.agent-memory/`, which ignores itself in git.
+
+**Understanding the project**
+- **Artifacts:**
+  - every file version, with rename and revert detection;
+  - Python and TypeScript symbols and imports;
+  - Markdown and reStructuredText sections and links;
+  - full-text search.
+- **Knowledge:** decisions, approaches, requirements, constraints, bugs and their fixes, under a topic
+  hierarchy, with supersession chains.
+- **State:** objectives, tasks, blockers, priorities, focus and next actions, with staleness and token-budgeted
+  levels.
+- **Verification:** test runs recorded with the files and environment they covered.
+
+**Working with agents**
+- **10 memory tools over MCP:** one per tree, plus links, load and get, context (offload, restore, pin),
+  storage, and declare.
+- **Protected items** (constraints, objectives, open conflicts, the current task) are never evicted silently.
+  When they overflow, they are ranked, referenced or counted.
+- **Several agents in one project:** a session started in Claude Code continues in OpenCode, and every change
+  names the agent and session that made it.
+- **Pi's session tree:** forks and `/tree` branches become memory branches.
+
+## What it does, and what it doesn't
+
+| Yewtree does | Yewtree doesn't |
+|---|---|
+| Keep the full history of a project's agent sessions, losslessly | Send anything over the network: no cloud, no telemetry, no API keys |
+| Tell you who changed a file, or say plainly that it doesn't know | Guess: an unexplained change is `unattributed` |
+| Give the agent a small overview and point to the rest | Fill the context window with everything it has |
+| Work with any agent that has hooks, MCP or just a shell | Block, approve or slow down an agent's actions |
+| Prove the record is intact (`amem verify`) | Prove nothing happened before capture started |
+| Redact secrets it recognises | Catch every secret format (purge exists for the rest) |
+| Encrypt file contents and full messages | Encrypt the event log's short summaries ([SECURITY.md](SECURITY.md)) |
+
+## Agents
+
+<p align="center"><img src="assets/tiers.svg" alt="Three tiers: hooks, MCP only, CLI only." width="100%"></p>
+
+| Agent | Tier | Connect it | Tested |
+|---|---|---|---|
+| **Claude Code** | Hooks | `claude plugin marketplace add AdamMostofi/yewtree`, then `claude plugin install yewtree@yewtree` | Replayed real sessions |
+| **OpenCode** | Hooks | Add `".../plugins/opencode/index.js"` to `plugin` in `opencode.json` | Live, OpenCode 1.18.35 |
+| **Pi** | Hooks | `pi install git:github.com/AdamMostofi/yewtree@v0.2.0` | Real runtime, Pi 1.4.0 |
+| **Codex** | Hooks | `codex plugin marketplace add AdamMostofi/yewtree`, install from `/plugins`, then trust its hooks in `/hooks` | Built from its docs |
+| **Gemini CLI** | Hooks | `gemini extensions install ./plugins/gemini` (from a clone) | Built from its docs |
+| **Cursor** | Hooks | `amem setup cursor` | Built from its docs |
+| **Windsurf, Cline** | MCP only | `amem setup windsurf` or `amem setup cline` | Built from their docs |
+| **Aider** | CLI only | `amem setup aider` | Built from its docs |
+
+"Built from its docs" means the adapter follows the agent's official documentation (read 2026-11-20) and passes
+the shared adapter suite. It has not been run against a real install yet. [docs/agents.md](docs/agents.md) has
+the details.
 
 ## Install
 
 ```bash
-uv tool install git+https://github.com/AdamMostofi/lossless-tree-memory@v0.1.0
+uv tool install git+https://github.com/AdamMostofi/yewtree@v0.2.0
 ```
 
-Then connect your agent. [docs/agents.md](docs/agents.md) says what each agent gets, and how far each was
-tested:
-
-| Agent | Connect it | Tested |
-|---|---|---|
-| Claude Code | `claude plugin marketplace add AdamMostofi/lossless-tree-memory`, then `claude plugin install lossless-tree-memory@lossless-tree-memory` | Replayed real sessions |
-| OpenCode | Clone this repository, then add `"plugin": ["/path/to/lossless-tree-memory/plugins/opencode/index.js"]` to `opencode.json` | Live, OpenCode 1.18.35 |
-| Pi | `pi install git:github.com/AdamMostofi/lossless-tree-memory@v0.1.0` | Real runtime, Pi 1.4.0 (scripted model) |
-| Codex | `codex plugin marketplace add AdamMostofi/lossless-tree-memory`, install from `/plugins`, then trust its hooks in `/hooks` | Not tested against an install |
-| Gemini CLI | Clone this repository, then `gemini extensions install ./plugins/gemini` | Not tested against an install |
-| Cursor, Windsurf, Cline, Aider | `amem setup cursor`, `windsurf`, `cline` or `aider`, in the project | Not tested against an install |
-
-Each project's memory lives in `<project>/.agent-memory/`, encrypted and ignored by git. [SECURITY.md](SECURITY.md)
-says what is stored, how it is protected, and what the hooks run.
-
-**Design documents** (in the ADAM repository):
-- [architecture revision 3](https://github.com/AdamMostofi/ADAM/blob/master/docs/design/2026-11-13-memory-architecture-rev3.md), the current architecture;
-- the [original design](https://github.com/AdamMostofi/ADAM/blob/master/docs/design/2026-11-06-agent-memory-engine.md).
-
-**Benchmark:** the comparison against plain compaction and against notes with git and grep was designed, but
-not run. [benchmark/RESULTS.md](benchmark/RESULTS.md) says why.
-
-## The four trees
-
-One shared store holds four independently navigable trees. Links between
-them are explicit, and each link says which trees it joins.
-
-| Tree | Navigator | Answers | Holds |
-|---|---|---|---|
-| History | `store.history` | What happened? | Sessions, turns and events, in order; conversation search |
-| Artifacts | `store.artifacts` | What exists? | Folders and artifacts with every version; symbols, sections, dependencies, metadata, search |
-| Knowledge | `store.knowledge` | What do we know? | Topics holding decisions, approaches, requirements, constraints, concepts, explanations, discoveries, bugs, solutions, questions, references |
-| Active State | `store.state` | What matters now? | Ten sections of declared and generated items, with staleness and token-budgeted levels |
-
-**Every record and link has a basis:**
-- `observed`: the engine saw it;
-- `declared`: an agent or the user stated it;
-- `inferred`: the engine derived it, and the rule is named.
-
-## What works so far
-
-- **Capture and storage (Stages 2.2, 2.5):**
-  - a canonical event format, and an append-only event log with per-writer hash chains;
-  - a compressed, encrypted, content-addressed archive;
-  - secret redaction and path exclusions, both recorded;
-  - gap records instead of silent loss, and capture that fails open (`safe_append`).
-- **Where it lives (decision D3):** inside the project, in `.agent-memory/`, which ignores itself in git. `AMEM_HOME` overrides it.
-- **Structure (Stages 2.3, 2.6):**
-  - the four trees, with per-tree schemas checked on every write;
-  - cross-tree links, typed relationships and development paths;
-  - domain profiles: `generic`, `software` and `documents`;
-  - format upgrades by replaying the log, which is never changed.
-- **Artifacts (Stages 2.4, 2.7):**
-  - file versions, with rename and revert detection;
-  - Python and TypeScript imports (tsconfig aliases included) and symbols;
-  - Markdown and reStructuredText sections and links;
-  - metadata for any file, and full-text search;
-  - test results shown as verified, stale or unknown, with reasons.
-- **Knowledge (Stage 2.8):**
-  - entry kinds with statuses, and a topic hierarchy;
-  - supersession chains;
-  - bug-to-solution-to-evidence links;
-  - knowledge and conversation search.
-- **Active state (Stage 2.9):**
-  - objectives, progress, tasks, blockers, priorities, constraints, open conflicts, working context, verification and next actions;
-  - generated items, such as changes since the last session and decisions that apply to the current focus;
-  - staleness with reasons;
-  - levels 0 to 2 within budgets you can set (`store.configure`);
-  - never any raw tool output.
-- **Reconciliation and recovery (Stage 2.5):**
-  - attribution of file changes to `agent_tool`, `agent_bash`, `git_operation`, `external` or an honest `unattributed`;
-  - conflict records for concurrent agents;
-  - checkpoints, and crash recovery that matches a clean replay;
-  - `amem verify`, which reports four things separately (#93). Archive integrity (its exit code) proves the captured records are intact and continuous, not that nothing was missed before capture. So it also reports capture completeness within the instrumentation (sessions that ended cleanly, the last reconciliation), known gaps (`capture_gap` and `partial` records) and uncertain attribution (`unattributed` changes).
-
-```python
-from agent_memory import Store
-store = Store(".agent-memory")                       # or use location.store_path(project_root)
-bug = store.declare_entry("bug", "refresh race", "s1", "agent", topic="auth", concerns=["src/auth/jwt.py"])
-store.declare_state("task", "fix the refresh race", "s1", "agent")
-store.knowledge.topics()                             # browse: listings only, no bodies
-store.artifacts.find_part("refresh")                 # where is it defined?
-store.state.overview()                               # level 0: what matters now, in about 200 tokens
-start = store.context.assemble("s2", prompt="why does refresh fail?")   # the session's starting context
-packet = store.context.load("s2", bug, level=2)      # then load, offload, restore by handle
-store.context.offload("s2", packet["handle"], keep="caused by a double rotate")
-```
+Then connect your agent (the table above), and work as usual. To look at what was recorded:
 
 ```bash
-uv sync --locked --extra dev
-uv run pytest -q
-uv run amem --project /path/to/project reconcile    # also: where, verify, checkpoint, recover, rebuild
+amem verify               # integrity, capture completeness, known gaps, uncertain attribution
+amem state overview       # what matters now
+amem knowledge topics     # decisions, bugs, constraints, by topic
+amem history sessions     # every session, by every agent
+amem brief                # the memory overview as a file, for agents that only read files
 ```
 
-- **The context manager (Stage 2.10):**
-  - a crash-safe ledger of what the agent has loaded, with token budgets per tree;
-  - protected items (constraints, objectives, open conflicts, active work, pins) that are never evicted automatically;
-  - offloading to one-line references, with exact restore;
-  - offers for what a prompt names but the context lacks;
-  - recovery after compaction;
-  - delivery for clients that build every request (`request_context`) or add context per prompt (`delta`).
-- **Agent tools:** `mem_state`, `mem_knowledge`, `mem_artifacts`, `mem_history`, `mem_links`, `mem_get`, `mem_load`, `mem_context` (including offload, restore and pin), `mem_storage`, `mem_declare`. They are served over MCP (`amem mcp`) and the CLI (`amem knowledge topics`, `amem offload handle=c3 keep=...`).
+The key that encrypts the memory lives outside the project by default. A passphrase or the OS keychain works
+too: set `AMEM_KEY_SOURCE` (`key-file`, `passphrase` or `keychain`).
 
-- **Storage (Stage 2.11):**
-  - **Compression:** old, unvisited content is packed and compressed losslessly (lzma) once the store passes a recommended size, or whenever an agent or user asks (`mem_storage`, `amem storage compress|decompress`).
-  - **Purge** of a leaked secret, an object or a session leaves no byte behind, keeps history connected, and can rotate the data key (`amem purge`; user only).
-  - **Size and growth reporting,** with warnings.
-  - **Backups:** `amem export` / `amem import`.
-  - **Faster checks:** batch appends (a 20,000-file first scan in about 10 s), and a fast `amem verify` from the newest checkpoint (`--full` for everything).
+## Measured so far
 
-- **Agent adapters (Stage 3.1):** `amem hook claude-code <Event>` and the Claude Code plugin, with:
-  - lossless capture that never blocks the agent;
-  - memory injected at session start, on each prompt and after compaction;
-  - key storage chosen at onboarding: key file, passphrase with a session cache, or OS keychain.
+These come from the test suite and from replays of real sessions, not from a benchmark:
 
-- **OpenCode (Stage 3.3):** `amem hook opencode <event>` and the OpenCode plugin, an in-process npm plugin:
-  - one project's memory shared with Claude Code: a session started in one agent continues in the other;
-  - the memory overview in the system prompt, kept unchanged until a compaction, so prompt caching keeps working;
-  - offers on each prompt;
-  - the memory tools, registered by the plugin itself.
+| What | Result |
+|---|---|
+| Hook latency through the session server (replayed Claude Code sessions) | p50 36–39 ms, p95 103–150 ms |
+| Per event in OpenCode and Pi | 8–46 ms and 10–75 ms |
+| Recall on prompts that share no words with what they need (test fixture) | 20% before, 80% after task- and link-aware retrieval |
+| Memory overview at session start | about 390 tokens |
+| Tool definitions | about 1,224 estimated tokens |
 
-- **Pi (Stage 3.4):** `amem hook pi <event>` and the Pi package (`pi install`):
-  - Pi's session tree becomes memory branches, with no core change: a fork or clone links to its parent, and a
-    `/tree` branch continues as its own session;
-  - the memory overview is kept as a system-prompt section, which Pi keeps across compaction;
-  - offers on each prompt, and the memory tools through Pi's own MCP support.
+**The benchmark against plain compaction and against notes with git and grep is designed but not run.**
+[benchmark/RESULTS.md](benchmark/RESULTS.md) says why. Until it runs, there is no evidence that Yewtree reduces
+stale-state errors. That is the claim it exists to test.
 
-- **Other agents (Stage 3.5),** built from their documentation and not yet tested against real installs:
-  - **Hooks:** Codex (plugin) and Gemini CLI (extension), sharing Claude Code's hook handlers through
-    `adapters/hooked.py`; Cursor through `amem setup cursor`.
-  - **MCP only:** Windsurf/Devin and Cline (`amem setup windsurf|cline`; `amem mcp --agent`). The conversation
-    is a recorded gap, and file changes are `unattributed`.
-  - **CLI only:** Aider (`amem setup aider`, `amem brief`).
-  - **Tests:** one shared adapter suite runs all six hooked adapters.
+## FAQ
 
-- **Who did what:** every record names its agent and session.
-  - A file change that a tool or command explains names that writer (`by`).
-  - When two agents' commands both name a file, the change lists both (`by_candidates`), and nothing is guessed.
-  - A command still running keeps its changes, even if another agent reconciles meanwhile.
-  - Declarations made through the tools carry the declaring agent's session.
+**Does it need an API key, a model or an account?** No. The engine runs locally with no model and no network.
 
-## Not done yet
+**Where is my data?** In `<project>/.agent-memory/`, encrypted, with the key outside the project.
+[SECURITY.md](SECURITY.md) lists exactly what is encrypted and what isn't.
 
-- Real installs of Codex, Gemini CLI, Cursor, Windsurf, Cline and Aider ([docs/agents.md](docs/agents.md)).
-- Running the benchmark ([benchmark/RESULTS.md](benchmark/RESULTS.md)).
-- PyPI and npm packages: for now, everything installs from this repository.
+**Will it slow my agent down?** Hooks hand their data to a session server, in tens of milliseconds. If anything
+fails, the agent carries on and the failure becomes a recorded gap.
 
-Known problems from before the extraction are tracked in
-[ADAM's follow-up issues](https://github.com/AdamMostofi/ADAM/issues?q=is%3Aissue+is%3Aopen+label%3Afollow-up);
-new ones go to [this repository's issues](https://github.com/AdamMostofi/lossless-tree-memory/issues).
+**Can I use it with two agents at once?** Yes. Each change names the agent and session that made it. When two
+agents' commands could both explain a change, both are listed and neither is picked.
+
+**Why "Yewtree"?** Yews live for thousands of years and keep growing around their own past. Its logo's four
+branches are the four trees, growing from one root: the archive.
+
+## Development
+
+```bash
+git clone https://github.com/AdamMostofi/yewtree && cd yewtree
+uv sync --locked --extra dev
+uv run pytest -q
+```
+
+**Names:** the command is `amem`, and the Python package is `agent_memory`. Yewtree was built inside
+[ADAM](https://github.com/AdamMostofi/ADAM) under the working name `agent-memory`, and moved here with its
+history. The design documents are there:
+- [architecture revision 3](https://github.com/AdamMostofi/ADAM/blob/master/docs/design/2026-11-13-memory-architecture-rev3.md);
+- the [original design](https://github.com/AdamMostofi/ADAM/blob/master/docs/design/2026-11-06-agent-memory-engine.md).
+
+## License
+
+[MIT](LICENSE). Third-party licenses are in [THIRD_PARTY.md](THIRD_PARTY.md).

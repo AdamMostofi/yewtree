@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-labelledby="t d">
+  <title id="t">Yewtree</title>
+  <desc id="d">A trunk that splits into four branches, one for each memory tree: history, artifacts, knowledge and state, growing from roots that stand for the archive.</desc>
+  <style>
+    .wood { stroke: oklch(0.40 0.08 152); }
+    .root { stroke: oklch(0.40 0.08 152); opacity: .55; }
+    .n1 { fill: oklch(0.52 0.12 152); }
+    .n2 { fill: oklch(0.60 0.14 146); }
+    .n3 { fill: oklch(0.66 0.14 140); }
+    .n4 { fill: oklch(0.48 0.10 160); }
+    @media (prefers-color-scheme: dark) {
+      .wood, .root { stroke: oklch(0.86 0.06 150); }
+      .n1 { fill: oklch(0.74 0.13 152); }
+      .n2 { fill: oklch(0.80 0.14 146); }
+      .n3 { fill: oklch(0.86 0.13 140); }
+      .n4 { fill: oklch(0.70 0.11 160); }
+    }
+  </style>
+  <g fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path class="wood" d="M64 108 V70"/>
+    <path class="wood" d="M64 74 C64 60 46 56 30 42"/>
+    <path class="wood" d="M64 70 C64 54 54 40 52 22"/>
+    <path class="wood" d="M64 70 C64 54 74 40 76 22"/>
+    <path class="wood" d="M64 74 C64 60 82 56 98 42"/>
+    <path class="root" stroke-width="4" d="M64 108 C58 113 48 116 38 116"/>
+    <path class="root" stroke-width="4" d="M64 108 C70 113 80 116 90 116"/>
+    <path class="root" stroke-width="4" d="M64 108 V120"/>
+  </g>
+  <circle class="n1" cx="30" cy="42" r="10"/>
+  <circle class="n2" cx="52" cy="22" r="10"/>
+  <circle class="n3" cx="76" cy="22" r="10"/>
+  <circle class="n4" cx="98" cy="42" r="10"/>
+</svg>

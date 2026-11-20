@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" width="960" height="360" role="img" aria-labelledby="t d">
+  <title id="t">Three support tiers</title>
+  <desc id="d">Agents with hooks get full capture and memory in context. Agents with only MCP get the memory tools; their conversation is a recorded gap and their changes are unattributed. Agents with only a shell get a memory brief and file reconciliation.</desc>
+  <style>
+    text { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, Roboto, sans-serif; }
+    .t1 { fill: oklch(0.36 0.07 152); }
+    .t2 { fill: oklch(0.94 0.045 146); stroke: oklch(0.60 0.13 146); stroke-width: 1.5; }
+    .t3 { fill: oklch(0.97 0.015 150); stroke: oklch(0.72 0.06 150); stroke-width: 1.5; stroke-dasharray: 6 6; }
+    .h1 { fill: oklch(0.97 0.02 150); font-size: 22px; font-weight: 600; }
+    .s1 { fill: oklch(0.86 0.06 148); font-size: 14px; }
+    .b1 { fill: oklch(0.93 0.03 150); font-size: 15px; }
+    .h { fill: oklch(0.28 0.07 152); font-size: 22px; font-weight: 600; }
+    .s { fill: oklch(0.45 0.09 150); font-size: 14px; }
+    .b { fill: oklch(0.34 0.04 152); font-size: 15px; }
+    .dot1 { fill: oklch(0.80 0.14 146); } .dot { fill: oklch(0.55 0.12 150); }
+    @media (prefers-color-scheme: dark) {
+      .t1 { fill: oklch(0.80 0.10 150); }
+      .t2 { fill: oklch(0.26 0.045 146); stroke: oklch(0.74 0.13 146); }
+      .t3 { fill: oklch(0.23 0.02 150); stroke: oklch(0.55 0.06 150); }
+      .h1 { fill: oklch(0.22 0.05 152); } .s1 { fill: oklch(0.32 0.07 150); } .b1 { fill: oklch(0.26 0.05 152); }
+      .h { fill: oklch(0.95 0.03 150); } .s { fill: oklch(0.80 0.09 148); } .b { fill: oklch(0.86 0.03 150); }
+      .dot1 { fill: oklch(0.36 0.08 150); } .dot { fill: oklch(0.78 0.12 150); }
+    }
+  </style>
+  <rect class="t1" x="40" y="40" width="276" height="280" rx="18"/>
+  <text class="h1" x="66" y="82">Hooks</text>
+  <text class="s1" x="66" y="108">Claude Code, OpenCode, Pi,</text>
+  <text class="s1" x="66" y="128">Codex, Gemini CLI, Cursor</text>
+  <circle class="dot1" cx="72" cy="171" r="4"/><text class="b1" x="86" y="176">Every event captured</text>
+  <circle class="dot1" cx="72" cy="207" r="4"/><text class="b1" x="86" y="212">Memory in every session</text>
+  <circle class="dot1" cx="72" cy="243" r="4"/><text class="b1" x="86" y="248">Edits credited to the agent</text>
+  <circle class="dot1" cx="72" cy="279" r="4"/><text class="b1" x="86" y="284">Tools on demand</text>
+
+  <rect class="t2" x="342" y="40" width="276" height="280" rx="18"/>
+  <text class="h" x="368" y="82">MCP only</text>
+  <text class="s" x="368" y="108">Windsurf, Cline</text>
+  <circle class="dot" cx="374" cy="171" r="4"/><text class="b" x="388" y="176">The memory tools</text>
+  <circle class="dot" cx="374" cy="207" r="4"/><text class="b" x="388" y="212">Files reconciled each call</text>
+  <circle class="dot" cx="374" cy="243" r="4"/><text class="b" x="388" y="248">Conversation: a recorded gap</text>
+  <circle class="dot" cx="374" cy="279" r="4"/><text class="b" x="388" y="284">Changes: unattributed</text>
+
+  <rect class="t3" x="644" y="40" width="276" height="280" rx="18"/>
+  <text class="h" x="670" y="82">CLI only</text>
+  <text class="s" x="670" y="108">Aider</text>
+  <circle class="dot" cx="676" cy="171" r="4"/><text class="b" x="690" y="176">A memory brief to read</text>
+  <circle class="dot" cx="676" cy="207" r="4"/><text class="b" x="690" y="212">File reconciliation</text>
+  <circle class="dot" cx="676" cy="243" r="4"/><text class="b" x="690" y="248">No conversation capture</text>
+  <circle class="dot" cx="676" cy="279" r="4"/><text class="b" x="690" y="284">Changes: never credited</text>
+</svg>

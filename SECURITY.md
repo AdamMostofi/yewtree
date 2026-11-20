@@ -56,5 +56,5 @@ engine can't purge.
 ## Reporting
 
 Report a vulnerability privately through GitHub's
-[security advisories](https://github.com/AdamMostofi/lossless-tree-memory/security/advisories/new), not a
+[security advisories](https://github.com/AdamMostofi/yewtree/security/advisories/new), not a
 public issue.
