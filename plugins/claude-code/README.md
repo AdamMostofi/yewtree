@@ -1,6 +1,6 @@
 # agent-memory for Claude Code
 
-A Claude Code plugin for the [Lossless Tree Memory engine](../../packages/agent-memory/).
+A Claude Code plugin for the [Lossless Tree Memory engine](../../README.md).
 
 **What it records:** every session, prompt, tool call, file change, test run, assistant message and compaction, losslessly, in `<project>/.agent-memory/`. That folder is encrypted and ignored by git.
 
@@ -13,12 +13,12 @@ A Claude Code plugin for the [Lossless Tree Memory engine](../../packages/agent-
 ## Install
 
 ```bash
-uv tool install /path/to/ADAM/packages/agent-memory   # the amem command; once per machine
-claude plugin marketplace add AdamMostofi/ADAM        # once
-claude plugin install agent-memory@adam
+uv tool install git+https://github.com/AdamMostofi/lossless-tree-memory@v0.1.0   # the amem command; once per machine
+claude plugin marketplace add AdamMostofi/lossless-tree-memory   # once
+claude plugin install lossless-tree-memory@lossless-tree-memory
 ```
 
-To try it without installing: `claude --plugin-dir /path/to/ADAM/plugins/claude-code`.
+To try it without installing: `claude --plugin-dir /path/to/lossless-tree-memory/plugins/claude-code`.
 
 **When the plugin is enabled,** Claude Code asks:
 - **Key storage:** `key-file` (the default), `passphrase`, or `keychain`, which needs the `keyring` package. This is decision D4: the choice is made at onboarding.
@@ -32,7 +32,7 @@ To try it without installing: `claude --plugin-dir /path/to/ADAM/plugins/claude-
 ## Remove
 
 ```bash
-claude plugin uninstall agent-memory@adam
+claude plugin uninstall lossless-tree-memory@lossless-tree-memory
 ```
 
 Nothing in the project changes: the store is in `.agent-memory/`, which git ignores. Delete that folder to delete the memory too.

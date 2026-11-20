@@ -1,0 +1,16 @@
+{
+  "name": "pi-lossless-tree-memory",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The Pi package for Lossless Tree Memory, installable from this repository: pi install git:github.com/AdamMostofi/lossless-tree-memory. Needs the amem engine.",
+  "type": "module",
+  "keywords": ["pi-package", "memory"],
+  "license": "MIT",
+  "repository": { "type": "git", "url": "git+https://github.com/AdamMostofi/lossless-tree-memory.git" },
+  "pi": {
+    "extensions": ["./plugins/pi/extensions/agent-memory.ts"]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*"
+  }
+}

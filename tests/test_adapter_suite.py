@@ -23,7 +23,7 @@ from agent_memory.location import store_path
 from agent_memory.mcp import close_mcp_only_session, open_mcp_only_session, serve
 from agent_memory.setup import CURSOR_EVENTS, setup
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[1]
 SID = "s-1"
 
 
@@ -357,7 +357,7 @@ def test_the_codex_and_gemini_packages_hook_every_event_the_adapter_handles():
     manifest = json.loads((ROOT / "plugins" / "codex" / ".codex-plugin" / "plugin.json").read_text())
     assert manifest["hooks"] == "./hooks/hooks.json"
     extension = json.loads((ROOT / "plugins" / "gemini" / "gemini-extension.json").read_text())
-    assert extension["name"] == "agent-memory" and "agent-memory" in extension["mcpServers"]
+    assert extension["name"] == "lossless-tree-memory" and "agent-memory" in extension["mcpServers"]
 
 
 def test_every_plugin_ships_the_same_launcher():

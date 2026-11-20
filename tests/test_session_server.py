@@ -19,7 +19,7 @@ from agent_memory import Store, server
 from agent_memory.location import store_path
 from agent_memory.server import SessionServer, forward, ping, read_server_file, server_file
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[1]
 LAUNCHER = ROOT / "plugins" / "claude-code" / "scripts" / "amem-run"
 AMEM = Path(sys.executable).parent / "amem"
 S = "sess-srv"

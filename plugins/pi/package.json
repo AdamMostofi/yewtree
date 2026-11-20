@@ -1,15 +1,27 @@
 {
-  "name": "pi-agent-memory",
+  "name": "pi-lossless-tree-memory",
   "version": "0.1.0",
   "description": "Lossless project memory for Pi: capture, memory context in the system prompt and per prompt, the agent-memory tools, and Pi's session tree mapped onto memory branches. Needs the amem engine.",
   "type": "module",
-  "keywords": ["pi-package", "memory"],
+  "keywords": [
+    "pi-package",
+    "memory"
+  ],
   "license": "MIT",
-  "files": ["extensions", "README.md"],
+  "files": [
+    "extensions",
+    "README.md"
+  ],
   "pi": {
-    "extensions": ["./extensions/agent-memory.ts"]
+    "extensions": [
+      "./extensions/agent-memory.ts"
+    ]
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AdamMostofi/lossless-tree-memory.git"
   }
 }

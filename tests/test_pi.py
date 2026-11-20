@@ -22,7 +22,7 @@ from agent_memory.mcp import resolve_session
 from agent_memory.structure import session_node
 from agent_memory.tools import call
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[1]
 EXTENSION = ROOT / "plugins" / "pi"
 FIXTURES = Path(__file__).parent / "fixtures"
 S = "01a1f88d-f202-70f8-83fa-d391c91bf22f"

@@ -20,7 +20,7 @@ from agent_memory.location import store_path
 from agent_memory.mcp import resolve_session
 from agent_memory.tools import call
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "plugins" / "opencode" / "index.js"
 S = "ses_oc1"
 

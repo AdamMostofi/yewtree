@@ -1,6 +1,6 @@
 # agent-memory for OpenCode
 
-An OpenCode plugin for the [Lossless Tree Memory engine](../../packages/agent-memory/). It shares one project's
+An OpenCode plugin for the [Lossless Tree Memory engine](../../README.md). It shares one project's
 memory with the [Claude Code plugin](../claude-code/README.md): a session started in one agent continues in the
 other, and every record says which agent made it.
 
@@ -21,13 +21,13 @@ in `<project>/.agent-memory/` (encrypted, ignored by git).
 ## Install
 
 ```bash
-uv tool install /path/to/ADAM/packages/agent-memory   # the amem command; once per machine
+uv tool install git+https://github.com/AdamMostofi/lossless-tree-memory@v0.1.0   # the amem command; once per machine
 ```
 
 Then list the plugin in `opencode.json` (the project's, or `~/.config/opencode/opencode.json`):
 
 ```json
-{ "plugin": ["/path/to/ADAM/plugins/opencode/index.js"] }
+{ "plugin": ["/path/to/lossless-tree-memory/plugins/opencode/index.js"] }
 ```
 
 Listing the plugin turns everything on, the memory tools included: it registers `amem mcp` itself, which also
@@ -62,4 +62,4 @@ session server first (8–46 ms each in live runs), and otherwise to `amem hook 
   - a compaction through OpenCode's server API;
   - a new session that answered the decision's reason from memory, without reading files.
 - **The plugin file itself,** driven with recorded OpenCode hook shapes under Node, in
-  `packages/agent-memory/tests/test_opencode.py`.
+  `tests/test_opencode.py`.

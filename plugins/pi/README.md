@@ -1,6 +1,6 @@
 # agent-memory for Pi
 
-A Pi package for the [Lossless Tree Memory engine](../../packages/agent-memory/). It shares one project's
+A Pi package for the [Lossless Tree Memory engine](../../README.md). It shares one project's
 memory with the [Claude Code](../claude-code/README.md) and [OpenCode](../opencode/README.md) plugins, and maps
 Pi's session tree onto memory branches.
 
@@ -21,11 +21,11 @@ branch, in `<project>/.agent-memory/` (encrypted, ignored by git).
 ## Install
 
 ```bash
-uv tool install /path/to/ADAM/packages/agent-memory   # the amem command; once per machine
-pi install /path/to/ADAM/plugins/pi                  # turns on capture, context and the tools
+uv tool install git+https://github.com/AdamMostofi/lossless-tree-memory@v0.1.0   # the amem command; once per machine
+pi install git:github.com/AdamMostofi/lossless-tree-memory@v0.1.0   # turns on capture, context and the tools
 ```
 
-To try it for one run without installing: `pi -e /path/to/ADAM/plugins/pi`.
+To try it for one run without installing: `pi -e /path/to/lossless-tree-memory/plugins/pi`.
 
 **Environment variables:**
 - `AMEM_BIN`: where `amem` is. Default: `amem` on the PATH, then `~/.local/bin/amem`.
@@ -65,5 +65,5 @@ account and no cost. The session went through:
 5. a resumed session;
 6. a `pi --fork`.
 
-The real-runtime test is in `packages/agent-memory/tests/test_pi.py`, and is skipped where Pi isn't installed.
+The real-runtime test is in `tests/test_pi.py`, and is skipped where Pi isn't installed.
 No live model has been run: this machine has no cloud model set up for Pi.

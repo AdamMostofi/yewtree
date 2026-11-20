@@ -3,7 +3,7 @@
 **Status: built from the Gemini CLI documentation (read 2026-11-20); not tested against a real Gemini CLI
 install.** See [docs/agents.md](../../docs/agents.md).
 
-A Gemini CLI extension for the [Lossless Tree Memory engine](../../packages/agent-memory/): lossless capture
+A Gemini CLI extension for the [Lossless Tree Memory engine](../../README.md): lossless capture
 through Gemini CLI's hooks, memory context at session start and on each prompt, and the memory tools over MCP.
 
 ## Layout
@@ -16,8 +16,8 @@ through Gemini CLI's hooks, memory context at session start and on each prompt, 
 ## Install
 
 ```bash
-uv tool install /path/to/ADAM/packages/agent-memory
-gemini extensions install /path/to/ADAM/plugins/gemini
+uv tool install git+https://github.com/AdamMostofi/lossless-tree-memory@v0.1.0
+gemini extensions install /path/to/lossless-tree-memory/plugins/gemini
 ```
 
 ## Known gaps, from the docs

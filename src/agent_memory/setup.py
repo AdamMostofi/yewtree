@@ -178,7 +178,7 @@ def _aider(plan: Plan, amem: str) -> None:
 
 
 def _plugin(agent: str, plan: Plan, amem: str) -> None:
-    repo = Path(__file__).resolve().parents[4] / "plugins"   # in a clone of the repository
+    repo = Path(__file__).resolve().parents[2] / "plugins"   # in a clone of the repository
     if not repo.is_dir():
         repo = Path("<the agent-memory repository>/plugins")
     if agent == "codex":

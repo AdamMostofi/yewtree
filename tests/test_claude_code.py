@@ -17,7 +17,7 @@ from agent_memory.cli import main as amem
 from agent_memory.location import store_path
 from agent_memory.mcp import handle as mcp
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "plugins" / "claude-code"
 LAUNCHER = PLUGIN / "scripts" / "amem-run"
 S = "sess-1"
@@ -244,7 +244,7 @@ DOCUMENTED_EVENTS = {"SessionStart", "Setup", "UserPromptSubmit", "UserPromptExp
 
 def test_the_plugin_manifests_follow_the_documented_formats():
     manifest = json.loads((PLUGIN / ".claude-plugin" / "plugin.json").read_text())
-    assert manifest["name"] == "agent-memory" and "claude" not in manifest["name"]
+    assert manifest["name"] == "lossless-tree-memory" and "claude" not in manifest["name"]
     for option in manifest["userConfig"].values():
         assert set(option) <= {"type", "title", "description", "required", "default", "options", "multiple",
                                "sensitive", "min", "max"} and {"type", "title", "description"} <= set(option)

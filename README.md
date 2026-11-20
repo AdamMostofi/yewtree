@@ -1,20 +1,41 @@
-# agent-memory
+# Lossless Tree Memory
 
-**Status:** Phase 2 is complete (Stages 2.1 to 2.11) inside the ADAM
-repository. Phase 3 has started: the [Claude Code plugin](../../plugins/claude-code/README.md) (Stage 3.1) the [OpenCode plugin](../../plugins/opencode/README.md) (Stage 3.3) the [Pi package](../../plugins/pi/README.md) (Stage 3.4), and Stage 3.5's other agents and fallback tiers: [docs/agents.md](../../docs/agents.md) says what each gets and how far each is tested. `agent-memory` is a working name; the final name is decision D8.
+**Status:** v0.1.0, the first release. It was built inside the [ADAM](https://github.com/AdamMostofi/ADAM)
+repository under the working name `agent-memory`, and extracted here with its history. The command is `amem`,
+and the Python package is `agent_memory`.
 
-The Lossless Tree Memory Engine is a general-purpose, lossless memory for
-long-running AI agents, with software development as its primary use.
+A general-purpose, lossless memory for long-running AI agents, with software development as its primary use.
 
-**The principle:** the entire history is kept permanently, but an agent loads
-only what it needs, from the right tree, at the right time.
+**The principle:** the entire history is kept permanently, but an agent loads only what it needs, from the
+right tree, at the right time.
 
-Design documents:
-- [architecture revision 3](../../docs/design/2026-11-13-memory-architecture-rev3.md), the current architecture;
-- the [original design](../../docs/design/2026-11-06-agent-memory-engine.md).
+## Install
 
-This package never imports ADAM. A test enforces it, and CI runs its tests in
-an environment where ADAM isn't installed.
+```bash
+uv tool install git+https://github.com/AdamMostofi/lossless-tree-memory@v0.1.0
+```
+
+Then connect your agent. [docs/agents.md](docs/agents.md) says what each agent gets, and how far each was
+tested:
+
+| Agent | Connect it | Tested |
+|---|---|---|
+| Claude Code | `claude plugin marketplace add AdamMostofi/lossless-tree-memory`, then `claude plugin install lossless-tree-memory@lossless-tree-memory` | Replayed real sessions |
+| OpenCode | Clone this repository, then add `"plugin": ["/path/to/lossless-tree-memory/plugins/opencode/index.js"]` to `opencode.json` | Live, OpenCode 1.18.35 |
+| Pi | `pi install git:github.com/AdamMostofi/lossless-tree-memory@v0.1.0` | Real runtime, Pi 1.4.0 (scripted model) |
+| Codex | `codex plugin marketplace add AdamMostofi/lossless-tree-memory`, install from `/plugins`, then trust its hooks in `/hooks` | Not tested against an install |
+| Gemini CLI | Clone this repository, then `gemini extensions install ./plugins/gemini` | Not tested against an install |
+| Cursor, Windsurf, Cline, Aider | `amem setup cursor`, `windsurf`, `cline` or `aider`, in the project | Not tested against an install |
+
+Each project's memory lives in `<project>/.agent-memory/`, encrypted and ignored by git. [SECURITY.md](SECURITY.md)
+says what is stored, how it is protected, and what the hooks run.
+
+**Design documents** (in the ADAM repository):
+- [architecture revision 3](https://github.com/AdamMostofi/ADAM/blob/master/docs/design/2026-11-13-memory-architecture-rev3.md), the current architecture;
+- the [original design](https://github.com/AdamMostofi/ADAM/blob/master/docs/design/2026-11-06-agent-memory-engine.md).
+
+**Benchmark:** the comparison against plain compaction and against notes with git and grep was designed, but
+not run. [benchmark/RESULTS.md](benchmark/RESULTS.md) says why.
 
 ## The four trees
 
@@ -83,7 +104,6 @@ store.context.offload("s2", packet["handle"], keep="caused by a double rotate")
 ```
 
 ```bash
-cd packages/agent-memory
 uv sync --locked --extra dev
 uv run pytest -q
 uv run amem --project /path/to/project reconcile    # also: where, verify, checkpoint, recover, rebuild
@@ -136,7 +156,12 @@ uv run amem --project /path/to/project reconcile    # also: where, verify, check
   - A command still running keeps its changes, even if another agent reconciles meanwhile.
   - Declarations made through the tools carry the declaring agent's session.
 
-## Not built yet
-- **Phase 3:** the agent plugins and onboarding.
+## Not done yet
 
-Known problems are tracked as [follow-up issues](https://github.com/AdamMostofi/ADAM/issues?q=is%3Aissue+is%3Aopen+label%3Afollow-up).
+- Real installs of Codex, Gemini CLI, Cursor, Windsurf, Cline and Aider ([docs/agents.md](docs/agents.md)).
+- Running the benchmark ([benchmark/RESULTS.md](benchmark/RESULTS.md)).
+- PyPI and npm packages: for now, everything installs from this repository.
+
+Known problems from before the extraction are tracked in
+[ADAM's follow-up issues](https://github.com/AdamMostofi/ADAM/issues?q=is%3Aissue+is%3Aopen+label%3Afollow-up);
+new ones go to [this repository's issues](https://github.com/AdamMostofi/lossless-tree-memory/issues).
