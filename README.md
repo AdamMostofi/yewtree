@@ -11,6 +11,8 @@
   <img alt="Encrypted at rest" src="https://img.shields.io/badge/archive-encrypted-2f6b45">
 </p>
 
+[![M8ven Score](https://m8ven.ai/badge/mcp/adammostofi-yewtree-nzqgjc?v=6ca62c90f779c7b20953ce7163f53562)](https://m8ven.ai/mcp/adammostofi-yewtree-nzqgjc?s=readme)
+
 <p align="center">
   <b>Your coding agent forgets. Yewtree keeps everything, and shows the agent only what it needs.</b>
 </p>
