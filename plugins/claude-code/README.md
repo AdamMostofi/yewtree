@@ -13,7 +13,7 @@ A Claude Code plugin for the [Yewtree memory engine](../../README.md).
 ## Install
 
 ```bash
-uv tool install git+https://github.com/AdamMostofi/yewtree@v0.2.0   # the amem command; once per machine
+uv tool install git+https://github.com/AdamMostofi/yewtree@v0.3.0   # the amem command; once per machine
 claude plugin marketplace add AdamMostofi/yewtree   # once
 claude plugin install yewtree@yewtree
 ```

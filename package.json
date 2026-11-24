@@ -1,6 +1,6 @@
 {
   "name": "pi-yewtree",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "The Pi package for Yewtree, installable from this repository: pi install git:github.com/AdamMostofi/yewtree. Needs the amem engine.",
   "type": "module",

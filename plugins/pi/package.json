@@ -1,6 +1,6 @@
 {
   "name": "pi-yewtree",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Lossless project memory for Pi: capture, memory context in the system prompt and per prompt, the agent-memory tools, and Pi's session tree mapped onto memory branches. Needs the amem engine.",
   "type": "module",
   "keywords": [

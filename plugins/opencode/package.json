@@ -1,6 +1,6 @@
 {
   "name": "opencode-yewtree",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Lossless project memory for OpenCode: capture, memory context at session start and per prompt, and the agent-memory tools. Needs the amem engine.",
   "type": "module",
   "main": "index.js",

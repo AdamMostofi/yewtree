@@ -30,6 +30,9 @@ KINDS = frozenset({
     "context_load", "context_offload", "context_restore", "context_pin", "context_reset",
     # Stage 2.11: the record of a purge (a keyed fingerprint, never the content).
     "purge",
+    # 0.3.0: a generic, versioned record whose type and meaning belong to the caller (ADAM's facts, sources,
+    # derivations ...). The engine stores, versions, indexes and links it; it never interprets it.
+    "record",
 })
 
 COMPLETENESS = ("captured", "partial", "unavailable", "imported")

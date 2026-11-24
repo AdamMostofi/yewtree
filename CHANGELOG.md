@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.3.0 (2026-11-24)
+
+**Generic records**, so a program can keep its own data in the engine. Built for
+[ADAM](https://github.com/AdamMostofi/ADAM), which now keeps its facts, derivations, sources, passages, skills and
+traces here (ADAM Stage 4.1).
+
+- **Records:** a caller-defined type (such as `adam.fact`), a key, fields, an optional body and a list of fields
+  to index. The engine stores, versions, indexes and links them, and never interprets them.
+  - `put_record`, `put_records` (many puts and their links in one transaction), `retire_record`, `get_record`,
+    `record_body`, `record_history`, `find_records(type, **equals)`, `records(type)` and `record_edges`.
+  - Every put is a new version, and nothing is overwritten. A put that changes nothing stores nothing; a
+    caller that tracks its own changes can pass `check_unchanged=False` to skip that lookup.
+  - A body is archived like any payload: compressed and encrypted. Fields are in the event summary, so they
+    are searchable and redacted, not encrypted.
+  - Records are nodes of the knowledge tree, under the topic `records/<type>`, and rebuild from the log.
+- **Links:** a new basis, `recorded` (the caller states the link as a fact of its data), and attributes on a
+  link (`relate(..., attrs=...)`), such as a premise's position.
+- **Fixed:** opening a store with the profiles it already has no longer writes to it.
+
 ## 0.2.0 (2026-11-20)
 
 **Renamed to Yewtree** (the owner's choice). The repository is now

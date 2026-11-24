@@ -41,7 +41,9 @@ never claims one event caused another unless an event declares it.
 """
 from __future__ import annotations
 
+import hashlib
 import json
+import re
 import sqlite3
 from typing import Any
 
@@ -58,7 +60,9 @@ EDGE_TYPES = frozenset({
     "related_to",                                                                    # general
     "fixes", "fixed_by", "filed_under", "concerns", "discussed_in", "evidence_for",  # knowledge (Stage 2.8)
 })
-BASES = ("observed", "declared", "inferred")
+# "recorded": the caller's own record of something it worked out (a proof, a derivation), kept as given.
+# The engine neither saw it happen nor inferred it (0.3.0).
+BASES = ("observed", "declared", "inferred", "recorded")
 
 TREES = ("history", "artifacts", "knowledge", "state")
 # Per-tree schema: node type -> the node types it may contain.
@@ -68,9 +72,10 @@ SCHEMAS = {
     # Stage 2.8: topics nest, and every entry has one home topic ("unfiled" when none was given).
     "knowledge": {"root": ("topic",),
                   "topic": ("topic", "decision", "approach", "note", "requirement", "constraint", "concept",
-                            "explanation", "discovery", "bug", "solution", "question", "reference"),
+                            "explanation", "discovery", "bug", "solution", "question", "reference", "record"),
                   **{k: () for k in ("decision", "approach", "note", "requirement", "constraint", "concept",
-                                     "explanation", "discovery", "bug", "solution", "question", "reference")}},
+                                     "explanation", "discovery", "bug", "solution", "question", "reference",
+                                     "record")}},
     "state": {"root": ("section",),
               "section": ("goal", "task", "blocker", "conflict", "progress", "priority", "next_action", "focus"),
               **{k: () for k in ("goal", "task", "blocker", "conflict", "progress", "priority", "next_action",
@@ -100,11 +105,12 @@ STATUSES = {
     "solution": ("proposed", "applied", "verified", "reverted", "superseded"),
     "question": ("open", "answered", "dropped"),
     "reference": ("current", "superseded"),
+    "record": ("current", "retired"),
 }
 INITIAL = {"path": "proposed", "goal": "active", "task": "open", "decision": "proposed", "blocker": "open",
            "conflict": "open", "requirement": "open", "constraint": "active", "concept": "current",
            "explanation": "current", "discovery": "current", "bug": "open", "solution": "proposed",
-           "question": "open", "reference": "current"}
+           "question": "open", "reference": "current", "record": "current"}
 # Stage 2.9: state items declared through the `state_item` event (goals, tasks and blockers keep their own kinds).
 STATE_ITEM_KINDS = ("progress", "priority", "next_action", "focus")
 STATUSES.update({"progress": ("current", "superseded"), "priority": ("active", "done", "dropped"),
@@ -157,8 +163,19 @@ CREATE INDEX IF NOT EXISTS idx_edges_ord ON edges(from_id, type, ord);
 CREATE INDEX IF NOT EXISTS idx_nodes_type ON nodes(node_type);
 CREATE INDEX IF NOT EXISTS idx_nodes_tree ON nodes(tree, node_type);
 CREATE INDEX IF NOT EXISTS idx_statuses_node ON statuses(node_id);
+-- 0.3.0: every version of every generic record (append-only, like the log).
+CREATE TABLE IF NOT EXISTS record_versions (
+    node_id TEXT NOT NULL, type TEXT NOT NULL, key TEXT NOT NULL, version INTEGER NOT NULL, fields TEXT NOT NULL,
+    payload_object TEXT, source_event TEXT NOT NULL, log_position INTEGER NOT NULL, PRIMARY KEY (node_id, version));
+CREATE INDEX IF NOT EXISTS idx_record_versions_type ON record_versions(type, log_position);
+-- The current value of each field a caller asked to look records up by. Derived: replaced as versions arrive,
+-- emptied when a record is retired, and rebuilt from the log with everything else.
+CREATE TABLE IF NOT EXISTS record_index (
+    type TEXT NOT NULL, field TEXT NOT NULL, value TEXT NOT NULL, node_id TEXT NOT NULL, PRIMARY KEY (node_id, field));
+CREATE INDEX IF NOT EXISTS idx_record_index ON record_index(type, field, value);
 """
-TABLES = ("nodes", "edges", "retractions", "statuses", "file_versions", "verification_files")
+TABLES = ("nodes", "edges", "retractions", "statuses", "file_versions", "verification_files", "record_versions")
+DERIVED_TABLES = ("record_index",)   # rebuilt with the structure, but rows are replaced, so no append-only trigger
 FILE_CHANGES = ("added", "modified", "deleted", "renamed")
 
 
@@ -178,6 +195,8 @@ def drop(conn: sqlite3.Connection) -> None:
         for action in ("update", "delete"):
             conn.execute(f"DROP TRIGGER IF EXISTS {table}_append_only_{action}")
         conn.execute(f"DROP TABLE IF EXISTS {table}")
+    for table in DERIVED_TABLES:
+        conn.execute(f"DROP TABLE IF EXISTS {table}")
 
 
 # ------------------------------------------------------------ ids
@@ -194,6 +213,14 @@ def artifact_node(path: str) -> str:
 
 
 file_node = artifact_node   # the name used before format 2
+
+
+RECORD_TYPE = re.compile(r"^[a-z][a-z0-9_.-]{0,63}$")
+
+
+def record_node(record_type: str, key: str) -> str:
+    """A generic record's stable id: its type and a hash of its key (keys may hold any characters)."""
+    return f"record:{record_type}:{hashlib.sha256(key.encode()).hexdigest()[:24]}"
 
 
 def resolve(node_id: str) -> str:
@@ -335,6 +362,51 @@ def _artifact(conn, ev: Event, path: str) -> str:
     return node
 
 
+# ------------------------------------------------------------ generic records (0.3.0)
+def _validate_record(conn, s: dict) -> None:
+    op, rtype, key = s.get("op"), s.get("type"), s.get("key")
+    if op not in ("put", "retire"):
+        raise SchemaError("a record's op is 'put' or 'retire'")
+    if not isinstance(rtype, str) or not RECORD_TYPE.match(rtype):
+        raise SchemaError("a record type is lower case: letters, digits, '.', '_' or '-' (for example adam.fact)")
+    if not isinstance(key, str) or not key or len(key) > 1024:
+        raise SchemaError("a record key is a non-empty string of at most 1024 characters")
+    if op == "put":
+        fields = s.get("fields")
+        if not isinstance(fields, dict):
+            raise SchemaError("putting a record needs its fields, as a dict")
+        index = s.get("index") or []
+        if not isinstance(index, list) or any(f not in fields for f in index):
+            raise SchemaError("a record's index names fields it has")
+        for f in index:
+            if not isinstance(fields[f], (str, int, float, bool)):
+                raise SchemaError(f"indexed field {f!r} must be a string, number or boolean")
+    elif not _node_exists(conn, record_node(rtype, key)):
+        raise SchemaError(f"no {rtype} record with that key to retire")
+
+
+def _record(conn, ev: Event, s: dict) -> None:
+    rtype, key = s["type"], s["key"]
+    node = record_node(rtype, key)
+    if s["op"] == "retire":
+        _add_status(conn, node, "retired", s.get("reason"), "declared", ev)
+        conn.execute("DELETE FROM record_index WHERE node_id = ?", (node,))
+        return
+    if _add_node(conn, node, "record", ev, label=key[:80], parent=_topic(conn, ev, f"records/{rtype}", "observed"),
+                 basis="declared", type=rtype, key=key):
+        _add_status(conn, node, "current", None, "declared", ev)
+    elif current_status(conn, node) == "retired":
+        _add_status(conn, node, "current", "put again", "declared", ev)
+    version = conn.execute("SELECT COALESCE(MAX(version), 0) + 1 FROM record_versions WHERE node_id = ?",
+                           (node,)).fetchone()[0]
+    conn.execute("INSERT INTO record_versions VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                 (node, rtype, key, version, canonical_json(s["fields"]), ev.payload_object, ev.event_id,
+                  ev.log_position))
+    conn.execute("DELETE FROM record_index WHERE node_id = ?", (node,))
+    for field in s.get("index") or []:
+        conn.execute("INSERT INTO record_index VALUES (?, ?, ?, ?)", (rtype, field, str(s["fields"][field]), node))
+
+
 # ------------------------------------------------------------ validation (before the event is stored)
 def validate(conn, kind: str, summary: dict) -> None:
     """Reject a declared operation that can't be applied, so no event is stored for it."""
@@ -381,11 +453,17 @@ def validate(conn, kind: str, summary: dict) -> None:
     elif kind == "relation":
         if summary.get("type") not in EDGE_TYPES or summary.get("type") == "contains":
             raise SchemaError(f"relation type must be one of {sorted(EDGE_TYPES - {'contains'})}")
-        if summary.get("basis", "declared") not in ("declared", "inferred"):
-            raise SchemaError("a relation event's basis is 'declared' or 'inferred'; 'observed' is the engine's")
+        if summary.get("basis", "declared") not in ("declared", "inferred", "recorded"):
+            raise SchemaError("a relation event's basis is 'declared', 'inferred' or 'recorded'; 'observed' is "
+                              "the engine's")
+        attrs = summary.get("attrs")
+        if attrs is not None and (not isinstance(attrs, dict) or "reason" in attrs):
+            raise SchemaError("a relation's attrs are a dict, and 'reason' is given on its own")
         for end in ("from", "to"):
             if not summary.get(end) or not _node_exists(conn, resolve(summary[end])):
                 raise SchemaError(f"relation '{end}' must name an existing record")
+    elif kind == "record":
+        _validate_record(conn, summary)
     elif kind == "retraction":
         edge = summary.get("edge_id")
         row = conn.execute("SELECT type FROM edges WHERE edge_id = ?", (edge,)).fetchone() \
@@ -473,7 +551,9 @@ def _by_kind(conn, ev: Event, s: dict, session: str) -> None:
         _declared_links(conn, ev, node, s)
     elif ev.kind == "relation":
         _add_edge(conn, resolve(s["from"]), resolve(s["to"]), s["type"], s.get("basis", "declared"), ev,
-                  reason=s.get("reason"))
+                  reason=s.get("reason"), **(s.get("attrs") or {}))
+    elif ev.kind == "record":
+        _record(conn, ev, s)
     elif ev.kind == "retraction":
         conn.execute("INSERT INTO retractions VALUES (?, ?, ?, ?)",
                      (s["edge_id"], ev.event_id, s.get("reason"), ev.log_position))

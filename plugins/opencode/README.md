@@ -21,7 +21,7 @@ in `<project>/.agent-memory/` (encrypted, ignored by git).
 ## Install
 
 ```bash
-uv tool install git+https://github.com/AdamMostofi/yewtree@v0.2.0   # the amem command; once per machine
+uv tool install git+https://github.com/AdamMostofi/yewtree@v0.3.0   # the amem command; once per machine
 ```
 
 Then list the plugin in `opencode.json` (the project's, or `~/.config/opencode/opencode.json`):

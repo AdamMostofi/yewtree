@@ -169,7 +169,10 @@ class Store:
             stored = self._meta(conn, "profiles")
             if chosen is None:
                 return tuple(json.loads(stored)) if stored else self._save_profiles(conn, _profiles.DEFAULT)
-            return self._save_profiles(conn, _profiles.normalize(chosen))
+            names = _profiles.normalize(chosen)
+            if stored and tuple(json.loads(stored)) == names:
+                return names   # unchanged: opening the store writes nothing
+            return self._save_profiles(conn, names)
         finally:
             conn.close()
 
@@ -713,9 +716,161 @@ class Store:
         return self.declare(kind, session_id, writer_id, op="status", id=record_id, status=status, **fields)
 
     def relate(self, src: str, dst: str, type: str, session_id: str, writer_id: str,
-               basis: str = "declared", reason: str | None = None) -> Event:
-        return self.declare("relation", session_id, writer_id, **{"from": src, "to": dst, "type": type,
-                                                                  "basis": basis, "reason": reason})
+               basis: str = "declared", reason: str | None = None, attrs: dict | None = None) -> Event:
+        """Link two records. `basis` is declared, inferred or recorded (the caller's own record of something it
+        worked out, such as a proof step); `attrs` are kept on the edge (for example a rule and its version)."""
+        fields = {"from": src, "to": dst, "type": type, "basis": basis, "reason": reason}
+        if attrs:
+            fields["attrs"] = attrs
+        return self.declare("relation", session_id, writer_id, **fields)
+
+    # ------------------------------------------------------------ generic records (0.3.0)
+    # A record has a caller-defined type (lower case, for example "adam.fact") and key, and a dict of fields.
+    # Every put that changes something is a new version; nothing is overwritten or deleted. The engine
+    # indexes the fields a caller names in `index`, links records like any other node, and never interprets
+    # them. Fields are stored in the event summary (searchable, not encrypted); a `body` is archived
+    # (compressed and encrypted).
+    def _record_input(self, record_type: str, key: str, fields: dict, session_id: str, writer_id: str,
+                      body: bytes | str | None, index, agent: str) -> EventInput:
+        return EventInput(kind="record", session_id=session_id, writer_id=writer_id, agent=agent,
+                          summary_fields={"op": "put", "type": record_type, "key": key, "fields": fields,
+                                          "index": list(index)}, payload=body)
+
+    def _unchanged(self, record_type: str, key: str, fields: dict, body) -> bool:
+        current = self.get_record(structure.record_node(record_type, key))
+        return (current is not None and current["status"] == "current" and body is None
+                and canonical_json(current["fields"]) == canonical_json(fields))
+
+    def put_record(self, record_type: str, key: str, fields: dict, session_id: str, writer_id: str,
+                   body: bytes | str | None = None, index=(), agent: str = "unknown") -> str:
+        """Store a record (or a new version of it) and return its id. A put that changes nothing stores nothing."""
+        rid = structure.record_node(record_type, key)
+        if not self._unchanged(record_type, key, fields, body):
+            self.append(self._record_input(record_type, key, fields, session_id, writer_id, body, index, agent))
+        return rid
+
+    def put_records(self, items, session_id: str, writer_id: str, agent: str = "unknown", links=(),
+                    check_unchanged: bool = True) -> list[str]:
+        """Many puts, then links between them, in one transaction (all or none).
+
+        Each item: {type, key, fields, body?, index?}. Each link: {from, to, type, basis?, reason?, attrs?};
+        a link may name a record stored earlier in the same call. A put that changes nothing is skipped,
+        unless `check_unchanged` is False: a caller that already knows its items changed (it keeps its own
+        copy of the current fields) can skip that lookup, and every item is stored as a new version.
+        """
+        inputs, ids = [], []
+        for it in items:
+            ids.append(structure.record_node(it["type"], it["key"]))
+            if check_unchanged and self._unchanged(it["type"], it["key"], it["fields"], it.get("body")):
+                continue
+            inputs.append(self._record_input(it["type"], it["key"], it["fields"], session_id, writer_id,
+                                             it.get("body"), it.get("index", ()), agent))
+        for link in links:
+            fields = {"from": link["from"], "to": link["to"], "type": link["type"],
+                      "basis": link.get("basis", "declared"), "reason": link.get("reason")}
+            if link.get("attrs"):
+                fields["attrs"] = link["attrs"]
+            inputs.append(EventInput(kind="relation", session_id=session_id, writer_id=writer_id, agent=agent,
+                                     summary_fields=fields))
+        if inputs:
+            self.append_many(inputs)
+        return ids
+
+    def retire_record(self, record_id: str, session_id: str, writer_id: str, reason: str | None = None,
+                      agent: str = "unknown") -> None:
+        """Mark a record retired. Its versions stay; lookups by index stop finding it."""
+        rec = self.get_record(record_id)
+        if rec is None:
+            raise SchemaError(f"no record {record_id!r}")
+        self.append(EventInput(kind="record", session_id=session_id, writer_id=writer_id, agent=agent,
+                               summary_fields={"op": "retire", "type": rec["type"], "key": rec["key"],
+                                               "reason": reason}))
+
+    @staticmethod
+    def record_id(record_type: str, key: str) -> str:
+        return structure.record_node(record_type, key)
+
+    def _records_from(self, conn, node_ids) -> list[dict]:
+        out = []
+        for nid in node_ids:
+            row = conn.execute("SELECT node_id, type, key, version, fields, payload_object, source_event FROM "
+                               "record_versions WHERE node_id = ? ORDER BY version DESC LIMIT 1", (nid,)).fetchone()
+            if row:
+                out.append({"id": row[0], "type": row[1], "key": row[2], "version": row[3],
+                            "fields": json.loads(row[4]), "has_body": row[5] is not None, "event_id": row[6],
+                            "status": structure.current_status(conn, row[0]) or "current"})
+        return out
+
+    def get_record(self, record_id: str) -> dict | None:
+        """A record's current version: id, type, key, version, fields, status, has_body, event_id."""
+        conn = self._connect()
+        try:
+            found = self._records_from(conn, [record_id])
+        finally:
+            conn.close()
+        return found[0] if found else None
+
+    def record_body(self, record_id: str, version: int | None = None) -> bytes | None:
+        conn = self._connect()
+        try:
+            row = conn.execute("SELECT payload_object FROM record_versions WHERE node_id = ? "
+                               + ("AND version = ?" if version else "ORDER BY version DESC LIMIT 1"),
+                               (record_id, version) if version else (record_id,)).fetchone()
+        finally:
+            conn.close()
+        return self.archive.get(row[0]) if row and row[0] else None
+
+    def record_history(self, record_id: str) -> list[dict]:
+        """Every version of a record, oldest first."""
+        conn = self._connect()
+        try:
+            rows = conn.execute("SELECT version, fields, source_event, log_position FROM record_versions "
+                                "WHERE node_id = ? ORDER BY version", (record_id,)).fetchall()
+        finally:
+            conn.close()
+        return [{"version": v, "fields": json.loads(f), "event_id": e, "log_position": p} for v, f, e, p in rows]
+
+    def find_records(self, record_type: str, **equals) -> list[dict]:
+        """Current records of a type whose indexed fields equal the given values (an indexed lookup)."""
+        if not equals:
+            return self.records(record_type)
+        conn = self._connect()
+        try:
+            query = " INTERSECT ".join("SELECT node_id FROM record_index WHERE type = ? AND field = ? AND value = ?"
+                                       for _ in equals)
+            params = [x for f, v in equals.items() for x in (record_type, f, str(v))]
+            ids = sorted(r[0] for r in conn.execute(query, params))
+            return [r for r in self._records_from(conn, ids) if r["status"] == "current"]
+        finally:
+            conn.close()
+
+    def records(self, record_type: str, include_retired: bool = False) -> list[dict]:
+        """Every record of a type, in the order they were first stored."""
+        conn = self._connect()
+        try:
+            ids = [r[0] for r in conn.execute("SELECT node_id FROM record_versions WHERE type = ? AND version = 1 "
+                                              "ORDER BY log_position", (record_type,))]
+            found = self._records_from(conn, ids)
+        finally:
+            conn.close()
+        return found if include_retired else [r for r in found if r["status"] == "current"]
+
+    def record_edges(self, record_id: str, types=None, direction: str = "out") -> list[dict]:
+        """A record's links that haven't been retracted: direction "out" (from it), "in" (to it) or "both"."""
+        conn = self._connect()
+        try:
+            clauses = {"out": "from_id = ?", "in": "to_id = ?", "both": "(from_id = ? OR to_id = ?)"}[direction]
+            params = [record_id] * (2 if direction == "both" else 1)
+            sql = (f"SELECT edge_id, from_id, to_id, type, basis, attrs, log_position FROM edges WHERE {clauses} "
+                   "AND type != 'contains' AND edge_id NOT IN (SELECT edge_id FROM retractions)")
+            if types:
+                sql += f" AND type IN ({','.join('?' * len(types))})"
+                params += list(types)
+            rows = conn.execute(sql + " ORDER BY log_position, edge_id", params).fetchall()
+        finally:
+            conn.close()
+        return [{"edge_id": e, "from": a, "to": b, "type": t, "basis": bs, "attrs": json.loads(at), "log_position": lp}
+                for e, a, b, t, bs, at, lp in rows]
 
     def declare_entry(self, kind: str, title: str, session_id: str, writer_id: str, **fields) -> str:
         """One declaration path for every knowledge kind. Returns the new entry's id.

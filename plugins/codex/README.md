@@ -20,7 +20,7 @@ It shares one project's memory with the other agents' plugins.
 ## Install
 
 ```bash
-uv tool install git+https://github.com/AdamMostofi/yewtree@v0.2.0   # the amem command
+uv tool install git+https://github.com/AdamMostofi/yewtree@v0.3.0   # the amem command
 codex plugin marketplace add AdamMostofi/yewtree
 ```
 

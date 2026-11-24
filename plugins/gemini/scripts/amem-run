@@ -86,13 +86,13 @@ esac
 
 # amem isn't installed: never block, and say how to fix it where it can be seen.
 if [ "$mode" = "mcp" ]; then
-  echo "agent-memory: the amem command isn't installed. Install it with: uv tool install git+https://github.com/AdamMostofi/yewtree@v0.2.0" \
+  echo "agent-memory: the amem command isn't installed. Install it with: uv tool install git+https://github.com/AdamMostofi/yewtree@v0.3.0" \
        "(see https://github.com/AdamMostofi/yewtree)" >&2
   exit 1
 fi
 cat >/dev/null   # read the hook's input so the agent isn't left writing to a closed pipe
 if [ "${1:-}" = "SessionStart" ]; then
-  printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"The agent-memory plugin is enabled, but its amem command is not installed, so this session is not being remembered. To install it: uv tool install git+https://github.com/AdamMostofi/yewtree@v0.2.0. The agent works as usual meanwhile."}}'
+  printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"The agent-memory plugin is enabled, but its amem command is not installed, so this session is not being remembered. To install it: uv tool install git+https://github.com/AdamMostofi/yewtree@v0.3.0. The agent works as usual meanwhile."}}'
 elif [ "$agent" = "gemini" ]; then
   printf '%s\n' '{}'   # Gemini CLI reads stdout as JSON
 fi

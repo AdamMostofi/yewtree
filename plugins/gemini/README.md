@@ -16,7 +16,7 @@ through Gemini CLI's hooks, memory context at session start and on each prompt, 
 ## Install
 
 ```bash
-uv tool install git+https://github.com/AdamMostofi/yewtree@v0.2.0
+uv tool install git+https://github.com/AdamMostofi/yewtree@v0.3.0
 gemini extensions install /path/to/yewtree/plugins/gemini
 ```
 

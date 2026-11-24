@@ -1,7 +1,7 @@
 {
   "name": "yewtree",
   "displayName": "Yewtree",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Lossless, tree-structured project memory: every session, edit and decision is kept, and only what the work needs is loaded into context, offloaded when done, and restored after compaction.",
   "author": {
     "name": "AdamMostofi",

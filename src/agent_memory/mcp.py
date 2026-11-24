@@ -19,7 +19,7 @@ from agent_memory import tools
 from agent_memory.server import LOCK
 
 PROTOCOL_VERSIONS = ("2025-06-18", "2025-03-26", "2024-11-05")
-SERVER_INFO = {"name": "agent-memory", "version": "0.2.0"}
+SERVER_INFO = {"name": "agent-memory", "version": "0.3.0"}
 INSTRUCTIONS = ("Project memory in four trees: history (what happened), artifacts (what exists), knowledge (what "
                 "is known), state (what matters now). Start with mem_context op=assemble. Load only what you need; "
                 "offload what you are done with (mem_context op=offload, keep= for findings); restore by handle. "

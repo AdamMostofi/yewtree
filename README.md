@@ -111,7 +111,7 @@ says how it is known:
 |---|---|---|---|
 | **Claude Code** | Hooks | `claude plugin marketplace add AdamMostofi/yewtree`, then `claude plugin install yewtree@yewtree` | Replayed real sessions |
 | **OpenCode** | Hooks | Add `".../plugins/opencode/index.js"` to `plugin` in `opencode.json` | Live, OpenCode 1.18.35 |
-| **Pi** | Hooks | `pi install git:github.com/AdamMostofi/yewtree@v0.2.0` | Real runtime, Pi 1.4.0 |
+| **Pi** | Hooks | `pi install git:github.com/AdamMostofi/yewtree@v0.3.0` | Real runtime, Pi 1.4.0 |
 | **Codex** | Hooks | `codex plugin marketplace add AdamMostofi/yewtree`, install from `/plugins`, then trust its hooks in `/hooks` | Built from its docs |
 | **Gemini CLI** | Hooks | `gemini extensions install ./plugins/gemini` (from a clone) | Built from its docs |
 | **Cursor** | Hooks | `amem setup cursor` | Built from its docs |
@@ -125,7 +125,7 @@ the details.
 ## Install
 
 ```bash
-uv tool install git+https://github.com/AdamMostofi/yewtree@v0.2.0
+uv tool install git+https://github.com/AdamMostofi/yewtree@v0.3.0
 ```
 
 Then connect your agent (the table above), and work as usual. To look at what was recorded:
@@ -140,6 +140,24 @@ amem brief                # the memory overview as a file, for agents that only 
 
 The key that encrypts the memory lives outside the project by default. A passphrase or the OS keychain works
 too: set `AMEM_KEY_SOURCE` (`key-file`, `passphrase` or `keychain`).
+
+## Records: the engine as a program's store
+
+A program can keep its own data in the engine as records (0.3.0). The engine stores, versions, indexes and
+links them; the program decides what they mean. [ADAM](https://github.com/AdamMostofi/ADAM) keeps its facts and
+derivations this way.
+
+```python
+from agent_memory import Store
+
+store = Store("facts.engine", project_id="myapp", profiles=["generic"])
+store.put_record("myapp.fact", "socrates|is|man", {"subject": "socrates", "object": "man"},
+                 "session-1", "myapp", index=["subject"])
+store.find_records("myapp.fact", subject="socrates")      # current versions whose indexed field matches
+store.record_history(Store.record_id("myapp.fact", "socrates|is|man"))   # every version, oldest first
+```
+
+`put_records` stores many records and the links between them in one transaction, all or none.
 
 ## Measured so far
 

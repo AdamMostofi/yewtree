@@ -21,8 +21,8 @@ branch, in `<project>/.agent-memory/` (encrypted, ignored by git).
 ## Install
 
 ```bash
-uv tool install git+https://github.com/AdamMostofi/yewtree@v0.2.0   # the amem command; once per machine
-pi install git:github.com/AdamMostofi/yewtree@v0.2.0   # turns on capture, context and the tools
+uv tool install git+https://github.com/AdamMostofi/yewtree@v0.3.0   # the amem command; once per machine
+pi install git:github.com/AdamMostofi/yewtree@v0.3.0   # turns on capture, context and the tools
 ```
 
 To try it for one run without installing: `pi -e /path/to/yewtree/plugins/pi`.
